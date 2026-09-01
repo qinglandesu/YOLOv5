@@ -207,7 +207,7 @@ def run(
     model=None,
     dataloader=None,
     save_dir=Path(""),
-    plots=True,
+    plots=False,  # True
     callbacks=Callbacks(),
     compute_loss=None,
 ):
@@ -412,6 +412,9 @@ def run(
     if (verbose or (nc < 50 and not training)) and nc > 1 and len(stats):
         for i, c in enumerate(ap_class):
             LOGGER.info(pf % (names[c], seen, nt[c], p[i], r[i], ap50[i], ap[i]))
+
+    # 输出准确率
+    LOGGER.info(f"平均准确率：{map50 * 100:.1f}%")
 
     # Print speeds
     t = tuple(x.t / seen * 1e3 for x in dt)  # speeds per image
