@@ -1,0 +1,54 @@
+cd /home/lab5/YOLO/yolov5
+conda activate yolov5
+
+screen -S yolo
+screen -r yolo
+
+export NO_COLOR=true
+set NO_COLOR=true
+
+mv train_log.txt runs/train/exp10/
+tar -zcvf exp10.tar.gz runs/train/exp10
+rm -rf runs/train/exp8/
+
+
+python3 detect.py --source ./data/images/bus.jpg
+python3 detect.py --source 0
+
+
+python3 train.py --data ../UATD/uatd_data.yaml --weights weights/yolov5s.pt --cfg models/yolov5s.yaml --optimizer AdamW --epochs 50 --batch 8 --img 640 --device 0 --workers 2
+python3 train.py --weights runs/train/exp/weights/last.pt --resume
+
+python3 val.py --weights runs/train/exp5/weights/best.pt --data ../UATD/uatd_data.yaml --img 640
+python3 val.py --weights runs/train/exp5/weights/best.pt --data ../UATD/uatd_data.yaml --img 640 --task test
+
+python3 train.py \
+--data ../UATD/uatd_data.yaml \
+--weights weights/yolov5s.pt \
+--cfg models/yolov5s.yaml \
+--optimizer AdamW \
+--epochs 50 \
+--patience 10 \
+--batch 32 \
+--img 640 \
+--device 0 \
+--workers 2 \
+--cos-lr \
+--label-smoothing 0.05 \
+ > train_log.txt 2>&1
+
+
+python3 train.py \
+--data ../UATD/uatd_data.yaml \
+--weights weights/yolov5m.pt \
+--cfg models/yolov5m.yaml \
+--optimizer AdamW \
+--epochs 50 \
+--patience 20 \
+--batch 16 \
+--img 640 \
+--device 0 \
+--workers 2 \
+--cos-lr \
+--label-smoothing 0.05 \
+ > train_log.txt 2>&1
