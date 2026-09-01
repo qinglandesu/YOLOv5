@@ -722,6 +722,12 @@ def colorstr(*input):
 
     See https://en.wikipedia.org/wiki/ANSI_escape_code.
     """
+    if os.environ.get('NO_COLOR', 'true').lower() in ('true', '1', 'yes'):
+        if len(input) > 1:
+            return input[-1]
+        else:
+            return input[0]
+
     *args, string = input if len(input) > 1 else ("blue", "bold", input[0])  # color arguments, string
     colors = {
         "black": "\033[30m",  # basic colors
